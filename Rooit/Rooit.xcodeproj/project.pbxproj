@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		066381602AA624EE0071F368 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0663815F2AA624EE0071F368 /* AppDelegate.swift */; };
 		066381622AA624EE0071F368 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066381612AA624EE0071F368 /* SceneDelegate.swift */; };
-		066381642AA624EE0071F368 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066381632AA624EE0071F368 /* ViewController.swift */; };
+		066381642AA624EE0071F368 /* HeadlinesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066381632AA624EE0071F368 /* HeadlinesViewController.swift */; };
 		066381672AA624EE0071F368 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 066381652AA624EE0071F368 /* Main.storyboard */; };
 		066381692AA624F00071F368 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 066381682AA624F00071F368 /* Assets.xcassets */; };
 		0663816C2AA624F00071F368 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0663816A2AA624F00071F368 /* LaunchScreen.storyboard */; };
@@ -28,7 +28,7 @@
 		0663815C2AA624EE0071F368 /* Rooit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rooit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0663815F2AA624EE0071F368 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		066381612AA624EE0071F368 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		066381632AA624EE0071F368 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		066381632AA624EE0071F368 /* HeadlinesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadlinesViewController.swift; sourceTree = "<group>"; };
 		066381662AA624EE0071F368 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		066381682AA624F00071F368 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0663816B2AA624F00071F368 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -115,7 +115,7 @@
 		0663817A2AA6288D0071F368 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				066381632AA624EE0071F368 /* ViewController.swift */,
+				066381632AA624EE0071F368 /* HeadlinesViewController.swift */,
 				0663818A2AA6F64E0071F368 /* NewsCell.swift */,
 				066381652AA624EE0071F368 /* Main.storyboard */,
 			);
@@ -213,7 +213,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0663818B2AA6F64E0071F368 /* NewsCell.swift in Sources */,
-				066381642AA624EE0071F368 /* ViewController.swift in Sources */,
+				066381642AA624EE0071F368 /* HeadlinesViewController.swift in Sources */,
 				066381832AA62B460071F368 /* MoyaService.swift in Sources */,
 				066381812AA62B1E0071F368 /* NewsViewModel.swift in Sources */,
 				066381742AA625E90071F368 /* Config.swift in Sources */,

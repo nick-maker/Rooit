@@ -14,7 +14,7 @@ class NewsViewModel {
 
   private let service: MoyaProvider<MoyaService>
   private var bag = DisposeBag()
-  var newsData = PublishSubject<NewsData>()
+  var newsData = BehaviorSubject(value: [Article]())
 
   init(service: MoyaProvider<MoyaService>) {
     self.service = service
@@ -29,7 +29,7 @@ class NewsViewModel {
           do {
             let filterResponse = try response.filterSuccessfulStatusCodes()
             let decodedData = try filterResponse.map(NewsData.self)
-            self.newsData.onNext(decodedData.self)
+            self.newsData.onNext(decodedData.articles)
           } catch let error {
             print(error.localizedDescription)
           }
