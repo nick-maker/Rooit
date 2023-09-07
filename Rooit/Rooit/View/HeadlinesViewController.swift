@@ -8,6 +8,7 @@
 import UIKit
 import Moya
 import RxSwift
+import RealmSwift
 
 class HeadlinesViewController: UIViewController {
 
@@ -23,17 +24,19 @@ class HeadlinesViewController: UIViewController {
   }()
 
   private var viewModel = NewsViewModel(service: MoyaProvider<MoyaService>())
-  private var bag = DisposeBag()
-  private var headlines = [Article]()
+  private var headlines = try! Realm().objects(RealmArticle.self)
+  private var refreshControl = UIRefreshControl()
 
   override func viewDidLoad() {
     super.viewDidLoad()
+    viewModel.delegate = self
+    addPullToRefresh()
     setupUI()
     fetchNews()
-    binding()
+    viewModel.observeRealmChanges()
   }
 
-  func setupUI() {
+  private func setupUI() {
     view.addSubview(tableView)
     NSLayoutConstraint.activate([
       tableView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -43,15 +46,17 @@ class HeadlinesViewController: UIViewController {
     ])
   }
 
-  func fetchNews() {
-    viewModel.fetchNews(country: "us")
+  private func addPullToRefresh() {
+    refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+    tableView.addSubview(refreshControl)
   }
 
-  func binding() {
-    viewModel.newsData.subscribe { newsData in
-      self.headlines = newsData
-      self.tableView.reloadData()
-    }.disposed(by: bag)
+  @objc private func refresh(sender:AnyObject) {
+    tableView.reloadData()
+  }
+
+  private func fetchNews() {
+    viewModel.fetchNews(country: "us")
   }
 
 }
@@ -65,14 +70,31 @@ extension HeadlinesViewController: UITableViewDelegate, UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     headlines.count
   }
-
+  
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsCell.reuseIdentifier, for: indexPath) as? NewsCell else { fatalError("Cannot Down casting")}
     let item = headlines[indexPath.row]
     cell.config(image: item.urlToImage, title: item.title)
+    refreshControl.endRefreshing()
     return cell
   }
 
 }
 
+extension HeadlinesViewController: NewsViewModelDelegate {
+
+  func updateInitial() {
+    tableView.reloadData()
+  }
+
+  func updateUIWithChanges(deletions: [Int], insertions: [Int], modifications: [Int]) {
+    
+    self.tableView.beginUpdates()
+    self.tableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
+    self.tableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
+    self.tableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
+    self.tableView.endUpdates()
+  }
+
+}
 
