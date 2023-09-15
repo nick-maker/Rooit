@@ -8,15 +8,13 @@
 import UIKit
 import Moya
 import RxSwift
-import RealmSwift
+import RxCocoa
 
 class HeadlinesViewController: UIViewController {
 
   lazy var tableView = {
     let tableView = UITableView()
     tableView.translatesAutoresizingMaskIntoConstraints = false
-    tableView.delegate = self
-    tableView.dataSource = self
     tableView.estimatedRowHeight = UITableView.automaticDimension
     tableView.rowHeight = UITableView.automaticDimension
     tableView.register(NewsCell.self, forCellReuseIdentifier: NewsCell.reuseIdentifier)
@@ -24,16 +22,16 @@ class HeadlinesViewController: UIViewController {
   }()
 
   private var viewModel = NewsViewModel(service: MoyaProvider<MoyaService>())
-  private var headlines = try! Realm().objects(RealmArticle.self)
+  private var headlines = [Article]()
   private var refreshControl = UIRefreshControl()
+  private var bag = DisposeBag()
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    viewModel.delegate = self
     addPullToRefresh()
     setupUI()
     fetchNews()
-    viewModel.observeRealmChanges()
+    tableViewBinding()
   }
 
   private func setupUI() {
@@ -59,41 +57,20 @@ class HeadlinesViewController: UIViewController {
     viewModel.fetchNews(country: "us")
   }
 
-}
+  private func tableViewBinding() {
+    viewModel.items
+      .bind(to: tableView.rx.items(cellIdentifier: NewsCell.reuseIdentifier, cellType: NewsCell.self)) { [weak self] (row, element, cell) in
+        cell.config(image: element.urlToImage, title: element.title)
+        self?.refreshControl.endRefreshing()
+      }
+      .disposed(by: bag)
 
-extension HeadlinesViewController: UITableViewDelegate, UITableViewDataSource {
-
-  func numberOfSections(in tableView: UITableView) -> Int {
-    1
-  }
-
-  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    headlines.count
-  }
-  
-  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsCell.reuseIdentifier, for: indexPath) as? NewsCell else { fatalError("Cannot Down casting")}
-    let item = headlines[indexPath.row]
-    cell.config(image: item.urlToImage, title: item.title)
-    refreshControl.endRefreshing()
-    return cell
-  }
-
-}
-
-extension HeadlinesViewController: NewsViewModelDelegate {
-
-  func updateInitial() {
-    tableView.reloadData()
-  }
-
-  func updateUIWithChanges(deletions: [Int], insertions: [Int], modifications: [Int]) {
-    
-    self.tableView.beginUpdates()
-    self.tableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
-    self.tableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
-    self.tableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
-    self.tableView.endUpdates()
+    tableView.rx
+      .modelSelected(Article.self)
+      .subscribe(onNext:  { value in
+        print("Tapped \(value)")
+      })
+      .disposed(by: bag)
   }
 
 }
